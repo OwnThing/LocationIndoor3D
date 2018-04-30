@@ -29,9 +29,7 @@ import java.util.*;
 
 import java.io.IOException;
 
-import static android.hardware.Camera.getCameraInfo;
-import static android.hardware.Camera.getNumberOfCameras;
-import android.hardware.Camera;
+
 
 public class MainActivity extends AppCompatActivity implements BDLocationListener{
 
@@ -45,11 +43,6 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
     private float mCurrentX;
     private MapBaseIndoorMapInfo myMapBaseIndoorMapInfo;
 
-    //3Dcamera view
-    private final String TAG = MainActivity.this.getClass().getSimpleName();
-
-    private Camera camera;
-    private boolean isPreview = false;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
