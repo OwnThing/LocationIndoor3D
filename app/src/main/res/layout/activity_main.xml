@@ -7,6 +7,13 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
+    <com.baidu.mapapi.map.MapView
+        android:id="@+id/bmapView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:clickable="true" />
+
     <TextView
         android:id="@+id/message"
         android:layout_width="wrap_content"
@@ -18,11 +25,11 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.baidu.mapapi.map.MapView
-    android:id="@+id/bmapView"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:clickable="true" />
+    <SurfaceView
+        android:id="@+id/surface_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"

@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
+import android.view.*;
 import android.widget.TextView;
 import android.util.Log;
 
@@ -26,6 +26,13 @@ import com.mittytomorrow.locationindoor.MyOrientationListener.OnOrientationListe
 
 import java.util.*;
 
+
+import java.io.IOException;
+
+import static android.hardware.Camera.getCameraInfo;
+import static android.hardware.Camera.getNumberOfCameras;
+import android.hardware.Camera;
+
 public class MainActivity extends AppCompatActivity implements BDLocationListener{
 
     private TextView mTextMessage;
@@ -38,6 +45,12 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
     private float mCurrentX;
     private MapBaseIndoorMapInfo myMapBaseIndoorMapInfo;
 
+    //3Dcamera view
+    private final String TAG = MainActivity.this.getClass().getSimpleName();
+
+    private Camera camera;
+    private boolean isPreview = false;
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -46,12 +59,15 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     mTextMessage.setText(R.string.title_home);
+                    mMapView.setVisibility(View.VISIBLE);
                     return true;
                 case R.id.navigation_dashboard:
                     mTextMessage.setText(R.string.title_dashboard);
+                    mMapView.setVisibility(View.INVISIBLE);
                     return true;
                 case R.id.navigation_notifications:
                     mTextMessage.setText(R.string.title_notifications);
+                    mMapView.setVisibility(View.INVISIBLE);
                     return true;
             }
             return false;
@@ -75,6 +91,8 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        setSystemUIVisible(false);
     }
 
     @Override
@@ -87,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
             // 开启方向传感器
             mOrientationListener.start();
         }
+        setSystemUIVisible(false);
     }
 
     @Override
@@ -103,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
     protected void onResume() {
         super.onResume();
         // 在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
+        setSystemUIVisible(false);
         mMapView.onResume();
     }
 
@@ -270,8 +290,35 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
                 accuracyCircleFillColor, accuracyCircleStrokeColor));
         mBaiduMap.setIndoorEnable(true);//打开室内图，默认为关闭状态
         mBaiduMap.setCompassEnable(true);//打开方向罗盘
-//        MapStatusUpdate msu = MapStatusUpdateFactory.zoomTo(15.0f);// 设置地图放大比例
-//        mBaiduMap.setMapStatus(msu);
+        mMapView.showZoomControls(false);// 不显示地图缩放控件（按钮控制栏）
+
+        // 不显示地图上比例尺
+//        mMapView.showScaleControl(false);
+
+//        // 隐藏百度的LOGO
+//        View child = mMapView.getChildAt(1);
+//        if (child != null && (child instanceof ImageView || child instanceof ZoomControls)) {
+//            child.setVisibility(View.INVISIBLE);
+//        }
+
+        MapStatusUpdate msu = MapStatusUpdateFactory.zoomTo(15.0f);// 设置地图放大比例
+        mBaiduMap.setMapStatus(msu);
+    }
+
+    private void setSystemUIVisible(boolean show) {
+        if (show) {
+            int uiFlags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            uiFlags |= 0x00001000;
+            getWindow().getDecorView().setSystemUiVisibility(uiFlags);
+        } else {
+            int uiFlags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            uiFlags |= 0x00001000;
+            getWindow().getDecorView().setSystemUiVisibility(uiFlags);
+        }
     }
 }
 
