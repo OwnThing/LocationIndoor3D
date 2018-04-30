@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
+import android.view.*;
 import android.widget.TextView;
 import android.util.Log;
 
@@ -20,11 +20,10 @@ import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.map.MyLocationConfiguration.*;
 import com.baidu.mapapi.map.MapBaseIndoorMapInfo.SwitchFloorError;
 import com.baidu.mapapi.map.MapBaseIndoorMapInfo.SwitchFloorError.*;
-
 //import com.mittytomorrow.locationindoor.MyOrientationListener;
 import com.mittytomorrow.locationindoor.MyOrientationListener.OnOrientationListener;
-
 import java.util.*;
+import org.opencv.android.OpenCVLoader;
 
 public class MainActivity extends AppCompatActivity implements BDLocationListener{
 
@@ -38,6 +37,14 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
     private float mCurrentX;
     private MapBaseIndoorMapInfo myMapBaseIndoorMapInfo;
 
+    Bundle savedInstanceState
+    //openCV 模块加载
+    static {
+        if (!OpenCVLoader.initDebug()) {
+            Log.d("OpenCV failtal","init failed");
+        }
+    }
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -45,13 +52,13 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
+                    setContentView(R.layout.activity_main);
                     return true;
                 case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_dashboard);
+                    setContentView(R.layout.indoor);
                     return true;
                 case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
+                    setContentView(R.layout.indoor3d);
                     return true;
             }
             return false;
@@ -68,13 +75,15 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_main);
         //获取地图控件引用
-        mMapView = (MapView) findViewById(R.id.bmapView);
+        mMapView = (MapView) findViewById(R.id.outdoorView);
         initOutdoorLocation();
 
 //----------------------------------------------------------------------------------------------------
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        setSystemUIVisible(false);
     }
 
     @Override
@@ -273,6 +282,22 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
 //        MapStatusUpdate msu = MapStatusUpdateFactory.zoomTo(15.0f);// 设置地图放大比例
 //        mBaiduMap.setMapStatus(msu);
     }
-}
 
+
+    private void setSystemUIVisible(boolean show) {
+        if (show) {
+            int uiFlags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            uiFlags |= 0x00001000;
+            getWindow().getDecorView().setSystemUiVisibility(uiFlags);
+        } else {
+            int uiFlags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            uiFlags |= 0x00001000;
+            getWindow().getDecorView().setSystemUiVisibility(uiFlags);
+        }
+    }
+}
 
