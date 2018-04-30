@@ -4,30 +4,16 @@
     <item
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_home_black_24dp"
-<<<<<<< HEAD
         android:title="outdoor" />
-=======
-        android:title="OutDoor" />
->>>>>>> 3332f43a0819d4fd582f11986f9c0dbb4b0aa86e
 
     <item
         android:id="@+id/navigation_dashboard"
         android:icon="@drawable/ic_dashboard_black_24dp"
-<<<<<<< HEAD
         android:title="indoor3d" />
-=======
-        android:title="InDoor" />
->>>>>>> 3332f43a0819d4fd582f11986f9c0dbb4b0aa86e
 
     <item
         android:id="@+id/navigation_notifications"
         android:icon="@drawable/ic_notifications_black_24dp"
-<<<<<<< HEAD
         android:title="indoor" />
-=======
-        android:title="indoor3D" />
-        <!--android:title="@string/title_notifications" />-->
-
->>>>>>> 3332f43a0819d4fd582f11986f9c0dbb4b0aa86e
 
 </menu>
