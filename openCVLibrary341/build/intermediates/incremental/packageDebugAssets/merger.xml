@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="D:\project\LocationIndoor3D\openCVLibrary341\src\main\assets"/><source path="D:\project\LocationIndoor3D\openCVLibrary341\build\intermediates\shader_assets\debug\compileDebugShaders\out"/></dataSet><dataSet config="debug"><source path="D:\project\LocationIndoor3D\openCVLibrary341\src\debug\assets"/></dataSet></merger>

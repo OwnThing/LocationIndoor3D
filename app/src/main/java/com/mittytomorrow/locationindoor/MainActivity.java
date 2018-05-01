@@ -33,6 +33,8 @@ import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.mittytomorrow.locationindoor.MyOrientationListener.OnOrientationListener;
 
+import org.opencv.android.OpenCVLoader;
+
 //import com.mittytomorrow.locationindoor.MyOrientationListener;
 
 
@@ -83,6 +85,13 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
             return false;
         }
     };
+
+    static {
+        if(!OpenCVLoader.initDebug())
+        {
+            Log.d("zz","openCV init failed!");
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -361,6 +370,7 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
         SettingsFragment.init(PreferenceManager.getDefaultSharedPreferences(this));
 
         setNotShow=true;
+
         mySettingsFragment=new SettingsFragment();
         buttonSettings.setOnClickListener(new View.OnClickListener() {
             @Override
