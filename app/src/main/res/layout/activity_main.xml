@@ -30,12 +30,48 @@
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="match_parent"-->
         <!--android:visibility="invisible"/>-->
+    <!--3Dview-->
     <FrameLayout
         android:id="@+id/camera_preview"
         android:layout_width="0px"
         android:layout_height="fill_parent"
         android:layout_weight="1"
-        android:visibility="invisible"/>
+        android:visibility="invisible"
+        android:paddingBottom="400px">
+        <!--<SurfaceView-->
+            <!--android:id="@+id/surface_view"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent" />-->
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_preview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/navigation"
+        android:visibility="invisible">
+
+        <Button
+            android:id="@+id/button_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设置" />
+
+        <Button
+            android:id="@+id/button_start_preview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="开始" />
+
+        <!--<Button-->
+        <!--android:id="@+id/button_stop_preview"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="停止" />-->
+    </LinearLayout>
+    <!--3Dview-->
 
 <android.support.design.widget.BottomNavigationView
     android:id="@+id/navigation"

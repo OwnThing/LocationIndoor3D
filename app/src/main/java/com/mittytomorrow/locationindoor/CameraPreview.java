@@ -39,6 +39,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         super(context);
         mHolder = getHolder();
         mHolder.addCallback(this);
+        setZOrderMediaOverlay(true);
         switch (processType) {
             case PROCESS_WITH_HANDLER_THREAD:
                 processFrameHandlerThread = new ProcessWithHandlerThread("process frame");
@@ -53,6 +54,18 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             case PROCESS_WITH_THREAD_POOL:
                 processFrameThreadPool = new ProcessWithThreadPool();
         }
+    }
+
+    public void show()
+    {
+//        setZOrderOnTop(true);//覆盖所有窗口
+        setZOrderMediaOverlay(true);
+    }
+
+    public void hide()
+    {
+//        setZOrderOnTop(false);
+        setZOrderMediaOverlay(false);
     }
 
     private void openCameraOriginal() {
@@ -78,6 +91,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mCamera.setPreviewCallback(this);
         try {
             mCamera.setPreviewDisplay(holder);
+            mCamera.setDisplayOrientation(90);
             mCamera.startPreview();
         } catch (IOException e) {
             Log.d(TAG, "Error setting camera preview: " + e.getMessage());

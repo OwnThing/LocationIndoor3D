@@ -1,13 +1,17 @@
 package com.mittytomorrow.locationindoor;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.view.*;
-import android.widget.TextView;
 import android.util.Log;
-
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
@@ -15,19 +19,21 @@ import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
-import com.baidu.mapapi.map.*;
-import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.map.MyLocationConfiguration.*;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapBaseIndoorMapInfo;
 import com.baidu.mapapi.map.MapBaseIndoorMapInfo.SwitchFloorError;
-import com.baidu.mapapi.map.MapBaseIndoorMapInfo.SwitchFloorError.*;
-
-//import com.mittytomorrow.locationindoor.MyOrientationListener;
+import com.baidu.mapapi.map.MapStatusUpdate;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
+import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.MyLocationConfiguration;
+import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
+import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.model.LatLng;
 import com.mittytomorrow.locationindoor.MyOrientationListener.OnOrientationListener;
 
-import java.util.*;
-
-
-import java.io.IOException;
+//import com.mittytomorrow.locationindoor.MyOrientationListener;
 
 
 
@@ -43,6 +49,14 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
     private float mCurrentX;
     private MapBaseIndoorMapInfo myMapBaseIndoorMapInfo;
 
+    private FrameLayout preview;
+    private CameraPreview mPreview;
+    private Button buttonSettings;
+    private Button buttonStartPreview;
+    private Button buttonStopPreview;
+    private LinearLayout buttonPreview;
+    private SettingsFragment mySettingsFragment;
+    private Boolean setNotShow=true;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -52,15 +66,18 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     mTextMessage.setText(R.string.title_home);
-                    mMapView.setVisibility(View.VISIBLE);
+                    mMapView.setVisibility(View.VISIBLE);//室外图
+                    stopPreview();//3D视图下关闭摄像头
                     return true;
                 case R.id.navigation_dashboard:
                     mTextMessage.setText(R.string.title_dashboard);
                     mMapView.setVisibility(View.INVISIBLE);
+                    startPreview();
                     return true;
                 case R.id.navigation_notifications:
                     mTextMessage.setText(R.string.title_notifications);
                     mMapView.setVisibility(View.INVISIBLE);
+                    stopPreview();
                     return true;
             }
             return false;
@@ -84,7 +101,24 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        //---------------------------------------------------------------------------------------------
+        buttonPreview=(LinearLayout)findViewById(R.id.bottom_preview);
 
+//        buttonStopPreview = (Button) findViewById(R.id.button_stop_preview);
+//        buttonStopPreview.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                stopPreview();
+//            }
+//        });
+//        SurfaceView mySurfaceView = (SurfaceView) findViewById(R.id.surface_view);
+
+        preview = (FrameLayout) findViewById(R.id.camera_preview);
+
+        buttonSettings = (Button) findViewById(R.id.button_settings);
+
+
+        //-----------------------------------------------------------------------------------------------
         setSystemUIVisible(false);
     }
 
@@ -261,7 +295,6 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
         }
         mMapView.refreshDrawableState();
     }
-
     private void initOutdoorLocation()
     {
         mBaiduMap = mMapView.getMap();
@@ -297,7 +330,6 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
         MapStatusUpdate msu = MapStatusUpdateFactory.zoomTo(15.0f);// 设置地图放大比例
         mBaiduMap.setMapStatus(msu);
     }
-
     private void setSystemUIVisible(boolean show) {
         if (show) {
             int uiFlags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
@@ -312,6 +344,48 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
             uiFlags |= 0x00001000;
             getWindow().getDecorView().setSystemUiVisibility(uiFlags);
         }
+    }
+
+
+    public void startPreview() {//3D视图下打开摄像头
+
+        buttonPreview.setVisibility(View.VISIBLE);
+        preview.setVisibility(View.VISIBLE);
+        mPreview = new CameraPreview(this);
+//        mPreview.show();
+        preview.addView(mPreview);
+
+        SettingsFragment.passCamera(mPreview.getCameraInstance());
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        SettingsFragment.setDefault(PreferenceManager.getDefaultSharedPreferences(this));
+        SettingsFragment.init(PreferenceManager.getDefaultSharedPreferences(this));
+
+        setNotShow=true;
+        mySettingsFragment=new SettingsFragment();
+        buttonSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(setNotShow) {
+                    setNotShow=false;
+                    getFragmentManager().beginTransaction().add(R.id.camera_preview, mySettingsFragment).addToBackStack(null).commit();
+                }
+            }
+        });
+        buttonStartPreview = (Button) findViewById(R.id.button_start_preview);
+        buttonStartPreview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setNotShow=true;
+                getFragmentManager().beginTransaction().remove(mySettingsFragment).addToBackStack(null).commit();
+            }
+        });
+    }
+
+    public void stopPreview() {//3D视图下关闭摄像头
+        buttonPreview.setVisibility(View.INVISIBLE);
+        preview.setVisibility(View.INVISIBLE);
+//        mPreview.hide();
+        preview.removeAllViews();
     }
 }
 
