@@ -258,6 +258,7 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
                 .build(); // 设置定位数据
         //华润五彩城31.835828，117.257186
         //之心城31.860291，117.263888
+        //国购广场31.859501，117.262875  F2,F1,B1
         //accuracy
         //定位精度
         //float	direction
