@@ -3,13 +3,11 @@ package com.mittytomorrow.locationindoor.camera;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.hardware.Camera;
-import android.util.Log;
 
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
-import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.concurrent.BlockingQueue;
@@ -78,44 +76,44 @@ public class ProcessWithThreadPool {
             Imgproc.cvtColor(inputFrame, grayscaleImage, Imgproc.COLOR_RGBA2RGB);
 
             MatOfRect mRect = new MatOfRect();
-
-
-            int maxRectArea = 0 * 0;
-            Rect maxRect = null;
-
-            int logonum = 0;
-
-            for (ObjectDetector detector : mObjectDetects) {
-                // 检测目标
-                Rect[] object = detector.detectObjectImage(inputFrame, mRect);
-                Log.e(TAG, object.length + "");
-
-                for (Rect rect : object) {
-                    ++logonum;
-                    // 找出最大的面积
-                    int tmp = rect.width * rect.height;
-                    if (tmp >= maxRectArea) {
-                        maxRectArea = tmp;
-                        maxRect = rect;
-                    }
-                }
-            }
-
-            Bitmap rectBitmap = null;
-            if (logonum != 0) {
-                // 剪切最大的头像
-                //Log.e("剪切的长宽", String.format("高:%s,宽:%s", maxRect.width, maxRect.height));
-                Rect rect = new Rect(maxRect.x, maxRect.y, maxRect.width, maxRect.height);
-                Mat rectMat = new Mat(inputFrame, rect);  // 从原始图像拿
-                rectBitmap = Bitmap.createBitmap(rectMat.cols(), rectMat.rows(), Bitmap.Config.ARGB_8888);
-                Utils.matToBitmap(rectMat, rectBitmap);
-
-                Bitmap resizeBmp = cimbt.resizeBitmap(rectBitmap, cimbt.getWidth(), cimbt.getHeight());
-                cimbt.setBitmap(resizeBmp);
-            } else {
-                cimbt.clearnImage();
-                cimbt.setText("没有检测到人脸");
-            }
+//
+//
+//            int maxRectArea = 0 * 0;
+//            Rect maxRect = null;
+//
+//            int logonum = 0;
+//
+//            for (ObjectDetector detector : mObjectDetects) {
+//                // 检测目标
+//                Rect[] object = detector.detectObjectImage(inputFrame, mRect);
+//                Log.e(TAG, object.length + "");
+//
+//                for (Rect rect : object) {
+//                    ++logonum;
+//                    // 找出最大的面积
+//                    int tmp = rect.width * rect.height;
+//                    if (tmp >= maxRectArea) {
+//                        maxRectArea = tmp;
+//                        maxRect = rect;
+//                    }
+//                }
+//            }
+//
+//            Bitmap rectBitmap = null;
+//            if (logonum != 0) {
+//                // 剪切最大的头像
+//                //Log.e("剪切的长宽", String.format("高:%s,宽:%s", maxRect.width, maxRect.height));
+//                Rect rect = new Rect(maxRect.x, maxRect.y, maxRect.width, maxRect.height);
+//                Mat rectMat = new Mat(inputFrame, rect);  // 从原始图像拿
+//                rectBitmap = Bitmap.createBitmap(rectMat.cols(), rectMat.rows(), Bitmap.Config.ARGB_8888);
+//                Utils.matToBitmap(rectMat, rectBitmap);
+//
+//                Bitmap resizeBmp = cimbt.resizeBitmap(rectBitmap, cimbt.getWidth(), cimbt.getHeight());
+//                cimbt.setBitmap(resizeBmp);
+//            } else {
+//                cimbt.clearnImage();
+//                cimbt.setText("没有检测到人脸");
+//            }
         }
 
     }

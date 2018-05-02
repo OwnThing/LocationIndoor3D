@@ -39,6 +39,8 @@ public class ImageRecognition {
 
     public void ImageRecognition(Mat originalImage){
         this.cameraOriginalImage=originalImage;
+        String sdDir = getSDCardBaseDir();
+        String filePath = sdDir + "/Pictures/OpenCV/" + "nake" + ".png";
     }
 
     public float getNndrRatio() {
@@ -199,6 +201,7 @@ public class ImageRecognition {
     public static String getSDCardBaseDir() {
         if (isSDCardMounted()) {
             return Environment.getExternalStorageDirectory().getAbsolutePath();
+//            Context.getExternalCacheDir()
         }
         return null;
     }
