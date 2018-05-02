@@ -31,11 +31,12 @@ import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
-import com.mittytomorrow.locationindoor.MyOrientationListener.OnOrientationListener;
+import com.mittytomorrow.locationindoor.camera.MyOrientationListener;
+import com.mittytomorrow.locationindoor.camera.MyOrientationListener.OnOrientationListener;
+import com.mittytomorrow.locationindoor.camera.CameraPreview;
+import com.mittytomorrow.locationindoor.camera.SettingsFragment;
 
 import org.opencv.android.OpenCVLoader;
-
-//import com.mittytomorrow.locationindoor.MyOrientationListener;
 
 
 
@@ -111,22 +112,6 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         //---------------------------------------------------------------------------------------------
-        buttonPreview=(LinearLayout)findViewById(R.id.bottom_preview);
-
-//        buttonStopPreview = (Button) findViewById(R.id.button_stop_preview);
-//        buttonStopPreview.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                stopPreview();
-//            }
-//        });
-//        SurfaceView mySurfaceView = (SurfaceView) findViewById(R.id.surface_view);
-
-        preview = (FrameLayout) findViewById(R.id.camera_preview);
-
-        buttonSettings = (Button) findViewById(R.id.button_settings);
-
-
         //-----------------------------------------------------------------------------------------------
         setSystemUIVisible(false);
     }
@@ -147,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
     @Override
     protected void onStop() {
         super.onStop();
+
         mBaiduMap.setMyLocationEnabled(false);
         // 停止定位
         mLocationClient.stop();
@@ -165,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
     @Override
     protected void onPause() {
         super.onPause();
+        finish();
         // 在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
         mMapView.onPause();
 
@@ -358,7 +345,10 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
 
 
     public void startPreview() {//3D视图下打开摄像头
-
+        preview = (FrameLayout) findViewById(R.id.camera_preview);
+        buttonPreview=(LinearLayout)findViewById(R.id.bottom_preview);
+        buttonSettings = (Button) findViewById(R.id.button_settings);
+        buttonStartPreview = (Button) findViewById(R.id.button_start_preview);
         buttonPreview.setVisibility(View.VISIBLE);
         preview.setVisibility(View.VISIBLE);
         mPreview = new CameraPreview(this);
@@ -382,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements BDLocationListene
                 }
             }
         });
-        buttonStartPreview = (Button) findViewById(R.id.button_start_preview);
+
         buttonStartPreview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
